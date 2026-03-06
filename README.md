@@ -64,7 +64,7 @@ src
  └─ main
      └─ java
          └─ com.example.demo
-             └─ Controller
+             └─ com.example.demo.Controller
 ```
 
 ---
