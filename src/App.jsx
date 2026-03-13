@@ -19,6 +19,256 @@ const TAB_ICONS = {
 };
 const AUTH_TYPES = ["None", "Bearer Token", "Basic Auth", "API Key"];
 
+// ── Desktop Guard ────────────────────────────────────────────────────────────
+const DESKTOP_MIN_WIDTH = 1024;
+
+function DesktopGuard({ children }) {
+  const [width, setWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  if (width >= DESKTOP_MIN_WIDTH) return children;
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 9999,
+        background:
+          "linear-gradient(135deg, #0f172a 0%, #1a1035 50%, #0f172a 100%)",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "24px",
+        textAlign: "center",
+        fontFamily: "'Inter', sans-serif",
+        overflow: "hidden",
+      }}
+    >
+      {/* Animated background grid */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundImage:
+            "linear-gradient(rgba(249,115,22,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(249,115,22,0.06) 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
+          maskImage:
+            "radial-gradient(ellipse at center, black 30%, transparent 80%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse at center, black 30%, transparent 80%)",
+        }}
+      />
+
+      {/* Glow orb */}
+      <div
+        style={{
+          position: "absolute",
+          width: 320,
+          height: 320,
+          borderRadius: "50%",
+          background:
+            "radial-gradient(circle, rgba(249,115,22,0.15) 0%, transparent 70%)",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* Icon */}
+      <div
+        style={{
+          position: "relative",
+          width: 80,
+          height: 80,
+          marginBottom: 24,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {/* Outer ring */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            borderRadius: "50%",
+            border: "1.5px solid rgba(249,115,22,0.4)",
+            animation: "pulse-ring 2s ease-in-out infinite",
+          }}
+        />
+        <div
+          style={{
+            width: 64,
+            height: 64,
+            borderRadius: 18,
+            background: "linear-gradient(135deg, #f97316, #ea580c)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 28,
+            boxShadow: "0 0 32px rgba(249,115,22,0.4)",
+          }}
+        >
+          🖥️
+        </div>
+      </div>
+
+      {/* Headline */}
+      <h1
+        style={{
+          position: "relative",
+          fontSize: "clamp(22px, 6vw, 28px)",
+          fontWeight: 800,
+          color: "#f1f5f9",
+          marginBottom: 10,
+          letterSpacing: "-0.5px",
+          lineHeight: 1.2,
+        }}
+      >
+        Desktop Only
+      </h1>
+
+      {/* Subtitle */}
+      <p
+        style={{
+          position: "relative",
+          fontSize: "clamp(13px, 4vw, 15px)",
+          color: "#94a3b8",
+          maxWidth: 320,
+          lineHeight: 1.7,
+          marginBottom: 28,
+        }}
+      >
+        <strong style={{ color: "#f97316" }}>DevProbe</strong> is a professional
+        API testing tool designed for desktop use. Please open this app on a
+        device with a screen wider than{" "}
+        <span
+          style={{
+            background: "rgba(249,115,22,0.15)",
+            color: "#fb923c",
+            border: "1px solid rgba(249,115,22,0.3)",
+            borderRadius: 4,
+            padding: "1px 7px",
+            fontFamily: "monospace",
+            fontSize: 13,
+          }}
+        >
+          {DESKTOP_MIN_WIDTH}px
+        </span>
+        .
+      </p>
+
+      {/* Current width indicator */}
+      <div
+        style={{
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          background: "rgba(30, 41, 59, 0.8)",
+          border: "1px solid rgba(51,65,85,0.8)",
+          borderRadius: 10,
+          padding: "10px 18px",
+          marginBottom: 28,
+          backdropFilter: "blur(8px)",
+        }}
+      >
+        <span style={{ fontSize: 14 }}>📐</span>
+        <span style={{ fontSize: 13, color: "#64748b" }}>Current width:</span>
+        <span
+          style={{
+            fontSize: 13,
+            fontWeight: 700,
+            fontFamily: "monospace",
+            color: "#f87171",
+          }}
+        >
+          {width}px
+        </span>
+        <span style={{ fontSize: 12, color: "#475569" }}>
+          / need {DESKTOP_MIN_WIDTH}px
+        </span>
+      </div>
+
+      {/* Progress bar */}
+      <div
+        style={{
+          position: "relative",
+          width: "min(280px, 85vw)",
+          height: 6,
+          background: "rgba(51, 65, 85, 0.6)",
+          borderRadius: 99,
+          overflow: "hidden",
+          marginBottom: 28,
+        }}
+      >
+        <div
+          style={{
+            height: "100%",
+            width: `${Math.min(100, (width / DESKTOP_MIN_WIDTH) * 100)}%`,
+            background:
+              width >= DESKTOP_MIN_WIDTH
+                ? "linear-gradient(90deg, #22c55e, #16a34a)"
+                : "linear-gradient(90deg, #f97316, #ef4444)",
+            borderRadius: 99,
+            transition: "width 0.3s ease",
+          }}
+        />
+      </div>
+
+      {/* Tips */}
+      <div
+        style={{
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          gap: 8,
+          width: "min(300px, 90vw)",
+        }}
+      >
+        {[
+          { icon: "💻", text: "Use a laptop or desktop computer" },
+          { icon: "🔄", text: "Rotate your tablet to landscape mode" },
+          { icon: "🪟", text: "Expand your browser window wider" },
+        ].map(({ icon, text }) => (
+          <div
+            key={text}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              padding: "8px 14px",
+              background: "rgba(15, 23, 42, 0.6)",
+              border: "1px solid rgba(30, 41, 59, 0.8)",
+              borderRadius: 8,
+              backdropFilter: "blur(4px)",
+            }}
+          >
+            <span style={{ fontSize: 15 }}>{icon}</span>
+            <span style={{ fontSize: 12, color: "#64748b" }}>{text}</span>
+          </div>
+        ))}
+      </div>
+
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        @keyframes pulse-ring {
+          0%, 100% { transform: scale(1); opacity: 0.4; }
+          50% { transform: scale(1.15); opacity: 0.1; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 // ── Error analyser ──────────────────────────────────────────────────────────
 function analyseError(err, url) {
   const msg = err?.message || String(err);
@@ -111,12 +361,11 @@ const LIGHT = {
   scroll: "#cbd5e1",
 };
 
-// ── Token-based JSON syntax highlighter — uses React spans (Vite compatible) ─
+// ── Token-based JSON syntax highlighter ─────────────────────────────────────
 function Highlight({ code, isDark }) {
   const tokens = [];
   let i = 0;
   while (i < code.length) {
-    // String token
     if (code[i] === '"') {
       let j = i + 1,
         str = '"';
@@ -133,32 +382,27 @@ function Highlight({ code, isDark }) {
         }
         j++;
       }
-      // Look ahead past whitespace — if next char is ':', this is a key
       let k = j;
       while (k < code.length && (code[k] === " " || code[k] === "\t")) k++;
       tokens.push({ type: code[k] === ":" ? "key" : "str", val: str });
       i = j;
       continue;
     }
-    // Number token
     const numM = code.slice(i).match(/^-?\d+(\.\d+)?([eE][+-]?\d+)?/);
     if (numM) {
       tokens.push({ type: "num", val: numM[0] });
       i += numM[0].length;
       continue;
     }
-    // Keyword token (true / false / null)
     const kwM = code.slice(i).match(/^(true|false|null)/);
     if (kwM) {
       tokens.push({ type: "kw", val: kwM[0] });
       i += kwM[0].length;
       continue;
     }
-    // Punctuation / whitespace
     tokens.push({ type: "punct", val: code[i] });
     i++;
   }
-
   const C = {
     key: isDark ? "#79d4a5" : "#0f7b55",
     str: isDark ? "#e6a87c" : "#c05621",
@@ -166,7 +410,6 @@ function Highlight({ code, isDark }) {
     kw: "#f97316",
     punct: isDark ? "#94a3b8" : "#64748b",
   };
-
   return (
     <pre
       style={{
@@ -422,7 +665,6 @@ export default function App() {
   const [dark, setDark] = useState(true);
   const t = dark ? DARK : LIGHT;
 
-  // Request
   const [url, setUrl] = useState(
     "https://jsonplaceholder.typicode.com/posts/1",
   );
@@ -442,16 +684,14 @@ export default function App() {
   const [apiKeyName, setApiKeyName] = useState("x-api-key");
   const [apiKeyValue, setApiKeyValue] = useState("");
 
-  // Response
   const [resp, setResp] = useState(null);
   const [errInfo, setErrInfo] = useState(null);
   const [loading, setLoading] = useState(false);
   const [reqTab, setReqTab] = useState("Params");
   const [resTab, setResTab] = useState("Body");
-  const [resView, setResView] = useState("pretty"); // pretty | raw
+  const [resView, setResView] = useState("pretty");
   const [fullscreen, setFullscreen] = useState(false);
 
-  // Sidebar
   const [reqName, setReqName] = useState("");
   const [collection, setCollection] = useState([]);
   const [history, setHistory] = useState([]);
@@ -465,13 +705,11 @@ export default function App() {
   const [testResult, setTestResult] = useState(null);
   const [copied, setCopied] = useState(false);
 
-  // Layout
   const [split, setSplit] = useState(48);
   const dragging = useRef(false);
   const containerRef = useRef(null);
   const abortRef = useRef(null);
 
-  // Ctrl+Enter to send
   useEffect(() => {
     const h = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
@@ -483,7 +721,6 @@ export default function App() {
     return () => window.removeEventListener("keydown", h);
   });
 
-  // Drag to resize
   useEffect(() => {
     const move = (e) => {
       if (!dragging.current || !containerRef.current) return;
@@ -521,7 +758,6 @@ export default function App() {
     return base;
   };
 
-  // ── Detect response type from Content-Type OR body shape ────────────────
   const detectJson = (text, contentType) => {
     if (contentType && contentType.includes("application/json")) return true;
     if (!text || text.length === 0) return false;
@@ -548,12 +784,9 @@ export default function App() {
     setErrInfo(null);
     setTestResult(null);
     setResTab("Body");
-    setResView("pretty"); // Always reset to Body/Pretty on new request
-
+    setResView("pretty");
     const ctrl = new AbortController();
     abortRef.current = ctrl;
-
-    // Build headers — always include Content-Type for POST/PUT/PATCH if body is JSON
     const hObj = {};
     hdrs
       .filter((h) => h.enabled !== false && h.key)
@@ -566,50 +799,38 @@ export default function App() {
       hObj["Authorization"] = "Basic " + btoa(`${authUser}:${authPass}`);
     else if (authType === "API Key" && apiKeyName)
       hObj[rv(apiKeyName)] = rv(apiKeyValue);
-
-    // Auto-set Content-Type for JSON body if not already set
     const hasBody =
       !["GET", "HEAD"].includes(method) && body && bodyType === "json";
     if (
       hasBody &&
       !Object.keys(hObj).find((k) => k.toLowerCase() === "content-type")
-    ) {
+    )
       hObj["Content-Type"] = "application/json";
-    }
-
     const reqUrl = buildUrl();
     const start = Date.now();
-
     try {
       const opts = { method, headers: hObj, signal: ctrl.signal };
       if (hasBody) opts.body = rv(body);
-
       const res = await fetch(reqUrl, opts);
       const elapsed = Date.now() - start;
       const rawText = await res.text();
-
-      // Robust JSON detection
       const contentType = res.headers.get("content-type") || "";
       const isJson = detectJson(rawText, contentType);
-
-      let prettyBody = rawText;
-      let parsed = null;
+      let prettyBody = rawText,
+        parsed = null;
       if (isJson && rawText.trim().length > 0) {
         try {
           parsed = JSON.parse(rawText);
           prettyBody = JSON.stringify(parsed, null, 2);
         } catch {
-          prettyBody = rawText; // fallback to raw if parse fails
+          prettyBody = rawText;
         }
       }
-
       const rh = {};
       res.headers.forEach((v, k) => {
         rh[k] = v;
       });
-
       const isHtml = !isJson && detectHtml(rawText, contentType);
-
       const ro = {
         status: res.status,
         statusText: res.statusText,
@@ -623,15 +844,10 @@ export default function App() {
         isHtml,
         method,
       };
-
-      // Auto-select best view mode
       if (isJson) setResView("pretty");
       else if (isHtml) setResView("html");
       else setResView("raw");
-
       setResp(ro);
-
-      // Save to history
       setHistory((prev) =>
         [
           {
@@ -649,8 +865,6 @@ export default function App() {
           ...prev,
         ].slice(0, 20),
       );
-
-      // Run tests
       try {
         const pm = {
           response: {
@@ -741,7 +955,6 @@ export default function App() {
     setTimeout(() => setCopied(false), 1500);
   };
 
-  // Shared styles
   const inp = {
     background: t.input,
     border: `1px solid ${t.border2}`,
@@ -774,1144 +987,1129 @@ export default function App() {
     letterSpacing: "0.4px",
   };
 
-  // ── Render ───────────────────────────────────────────────────────────────
   return (
-    <div
-      style={{
-        display: "flex",
-        height: "100vh",
-        background: t.bg,
-        color: t.text,
-        fontFamily: "'Inter',sans-serif",
-        overflow: "hidden",
-      }}
-    >
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-thumb { background: ${t.scroll}; border-radius: 10px; }
-        input::placeholder, textarea::placeholder { color: ${t.textDim}; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes fade { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
-        .tb { background:none; border:none; cursor:pointer; padding:8px 14px; font-size:13px; font-weight:500; color:${t.textMuted}; border-bottom:2px solid transparent; transition:all .15s; white-space:nowrap; }
-        .tb:hover { color:${t.text}; }
-        .tb.on { color:${t.accent}; border-bottom-color:${t.accent}; }
-        .rtb { background:none; border:none; cursor:pointer; padding:5px 11px; font-size:12px; font-weight:500; color:${t.textMuted}; border-radius:5px; transition:all .15s; }
-        .rtb.on { background:${t.card}; color:${t.accent}; }
-        .vtb { background:none; border:1px solid ${t.border2}; cursor:pointer; padding:3px 10px; font-size:11px; font-weight:600; color:${t.textMuted}; border-radius:4px; transition:all .15s; }
-        .vtb.on { background:${t.accent}22; border-color:${t.accent}; color:${t.accent}; }
-        .ib { background:${t.card}; border:1px solid ${t.border2}; border-radius:5px; color:${t.textMuted}; padding:5px 10px; cursor:pointer; font-size:12px; transition:all .15s; font-family:'Inter',sans-serif; white-space:nowrap; }
-        .ib:hover { color:${t.text}; border-color:${t.accent}; }
-        .sb { background:${t.accentGrad}; border:none; border-radius:6px; color:#fff; padding:9px 22px; cursor:pointer; font-size:13px; font-weight:700; transition:all .15s; white-space:nowrap; }
-        .sb:hover { filter:brightness(1.12); transform:translateY(-1px); }
-        .cb { background:#ef4444; border:none; border-radius:6px; color:#fff; padding:9px 22px; cursor:pointer; font-size:13px; font-weight:700; }
-        .stab { flex:1; padding:5px 2px; border-radius:5px; border:none; cursor:pointer; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.4px; transition:all .15s; }
-      `}</style>
-
-      {/* ── SIDEBAR ── */}
-      {sidebarOpen && (
-        <div
-          style={{
-            width: 238,
-            background: t.sidebar,
-            borderRight: `1px solid ${t.border}`,
-            display: "flex",
-            flexDirection: "column",
-            flexShrink: 0,
-          }}
-        >
-          <div
-            style={{
-              padding: "13px 12px",
-              borderBottom: `1px solid ${t.border}`,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                marginBottom: 12,
-              }}
-            >
-              <div
-                style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: 6,
-                  background: t.accentGrad,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 14,
-                  flexShrink: 0,
-                }}
-              >
-                ⚡
-              </div>
-              <span style={{ fontWeight: 700, fontSize: 15, color: t.text }}>
-                DevProbe
-              </span>
-              <span
-                style={{
-                  marginLeft: "auto",
-                  fontSize: 10,
-                  color: t.textDim,
-                  background: t.card,
-                  border: `1px solid ${t.border2}`,
-                  borderRadius: 4,
-                  padding: "1px 6px",
-                }}
-              >
-                v3
-              </span>
-            </div>
-            <div style={{ display: "flex", gap: 3 }}>
-              {[
-                ["collection", "📁 Saved"],
-                ["history", "🕒 History"],
-                ["env", "🌐 Env"],
-              ].map(([k, label]) => (
-                <button
-                  key={k}
-                  className="stab"
-                  onClick={() => setSideTab(k)}
-                  style={{
-                    background: sideTab === k ? t.card : "transparent",
-                    color: sideTab === k ? t.accent : t.textMuted,
-                  }}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div style={{ flex: 1, overflow: "auto", padding: 8 }}>
-            {sideTab === "collection" &&
-              (collection.length === 0 ? (
-                <p
-                  style={{
-                    textAlign: "center",
-                    color: t.textDim,
-                    fontSize: 12,
-                    marginTop: 32,
-                    lineHeight: 2,
-                  }}
-                >
-                  No saved requests.
-                  <br />
-                  Hit 💾 to save one.
-                </p>
-              ) : (
-                collection.map((item, i) => (
-                  <div
-                    key={i}
-                    onClick={() => loadReq(item)}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 6,
-                      padding: "7px 10px",
-                      borderRadius: 6,
-                      cursor: "pointer",
-                      marginBottom: 3,
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.background = t.card)
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.background = "transparent")
-                    }
-                  >
-                    <span
-                      style={{
-                        color: METHOD_COLORS[item.method] || "#9ca3af",
-                        fontSize: 10,
-                        fontWeight: 700,
-                        minWidth: 40,
-                        fontFamily: "monospace",
-                      }}
-                    >
-                      {item.method}
-                    </span>
-                    <span
-                      style={{
-                        color: t.text,
-                        fontSize: 12,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        flex: 1,
-                      }}
-                    >
-                      {item.name || item.url}
-                    </span>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setCollection((p) => p.filter((_, j) => j !== i));
-                      }}
-                      style={{
-                        background: "none",
-                        border: "none",
-                        color: t.textDim,
-                        cursor: "pointer",
-                        fontSize: 11,
-                      }}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))
-              ))}
-
-            {sideTab === "history" &&
-              (history.length === 0 ? (
-                <p
-                  style={{
-                    textAlign: "center",
-                    color: t.textDim,
-                    fontSize: 12,
-                    marginTop: 32,
-                    lineHeight: 2,
-                  }}
-                >
-                  No history yet.
-                  <br />
-                  Send a request!
-                </p>
-              ) : (
-                <>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      padding: "2px 4px",
-                      marginBottom: 8,
-                    }}
-                  >
-                    <span style={{ fontSize: 11, color: t.textMuted }}>
-                      Last {history.length} requests
-                    </span>
-                    <button
-                      onClick={() => setHistory([])}
-                      style={{
-                        background: "none",
-                        border: "none",
-                        color: t.textDim,
-                        cursor: "pointer",
-                        fontSize: 11,
-                      }}
-                    >
-                      Clear
-                    </button>
-                  </div>
-                  {history.map((item, i) => (
-                    <HistoryRow key={i} item={item} onLoad={loadReq} t={t} />
-                  ))}
-                </>
-              ))}
-
-            {sideTab === "env" && (
-              <div style={{ padding: 4 }}>
-                <p
-                  style={{
-                    fontSize: 11,
-                    color: t.textMuted,
-                    marginBottom: 8,
-                    lineHeight: 1.6,
-                  }}
-                >
-                  JSON variables. Use{" "}
-                  <code style={{ color: t.accent }}>{"{{name}}"}</code> in any
-                  field.
-                </p>
-                <textarea
-                  value={envText}
-                  onChange={(e) => setEnvText(e.target.value)}
-                  style={{ ...codeArea, height: 150, fontSize: 12 }}
-                  spellCheck={false}
-                />
-                <button
-                  onClick={() => {
-                    try {
-                      setEnv(JSON.parse(envText));
-                    } catch {
-                      alert("Invalid JSON");
-                    }
-                  }}
-                  style={{
-                    width: "100%",
-                    marginTop: 8,
-                    padding: 8,
-                    borderRadius: 6,
-                    border: "none",
-                    background: t.accentGrad,
-                    color: "#fff",
-                    cursor: "pointer",
-                    fontSize: 12,
-                    fontWeight: 600,
-                  }}
-                >
-                  Apply
-                </button>
-                {Object.keys(env).length > 0 &&
-                  Object.entries(env).map(([k, v]) => (
-                    <div
-                      key={k}
-                      style={{
-                        fontSize: 11,
-                        color: t.textMuted,
-                        padding: "4px 0",
-                        borderBottom: `1px solid ${t.border}`,
-                      }}
-                    >
-                      <span style={{ color: t.accent }}>{k}</span> = {v}
-                    </div>
-                  ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* ── MAIN ── */}
+    <DesktopGuard>
       <div
         style={{
-          flex: 1,
           display: "flex",
-          flexDirection: "column",
-          minWidth: 0,
+          height: "100vh",
+          background: t.bg,
+          color: t.text,
+          fontFamily: "'Inter',sans-serif",
+          overflow: "hidden",
         }}
       >
-        {/* TOP BAR */}
-        <div
-          style={{
-            padding: "10px 14px",
-            borderBottom: `1px solid ${t.border}`,
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            background: t.sidebar,
-            flexShrink: 0,
-          }}
-        >
-          <button
-            className="ib"
-            onClick={() => setSidebarOpen((s) => !s)}
-            style={{ fontSize: 15, padding: "5px 9px" }}
-          >
-            ☰
-          </button>
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          ::-webkit-scrollbar { width: 5px; height: 5px; }
+          ::-webkit-scrollbar-thumb { background: ${t.scroll}; border-radius: 10px; }
+          input::placeholder, textarea::placeholder { color: ${t.textDim}; }
+          @keyframes spin { to { transform: rotate(360deg); } }
+          @keyframes fade { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+          .tb { background:none; border:none; cursor:pointer; padding:8px 14px; font-size:13px; font-weight:500; color:${t.textMuted}; border-bottom:2px solid transparent; transition:all .15s; white-space:nowrap; }
+          .tb:hover { color:${t.text}; }
+          .tb.on { color:${t.accent}; border-bottom-color:${t.accent}; }
+          .rtb { background:none; border:none; cursor:pointer; padding:5px 11px; font-size:12px; font-weight:500; color:${t.textMuted}; border-radius:5px; transition:all .15s; }
+          .rtb.on { background:${t.card}; color:${t.accent}; }
+          .vtb { background:none; border:1px solid ${t.border2}; cursor:pointer; padding:3px 10px; font-size:11px; font-weight:600; color:${t.textMuted}; border-radius:4px; transition:all .15s; }
+          .vtb.on { background:${t.accent}22; border-color:${t.accent}; color:${t.accent}; }
+          .ib { background:${t.card}; border:1px solid ${t.border2}; border-radius:5px; color:${t.textMuted}; padding:5px 10px; cursor:pointer; font-size:12px; transition:all .15s; font-family:'Inter',sans-serif; white-space:nowrap; }
+          .ib:hover { color:${t.text}; border-color:${t.accent}; }
+          .sb { background:${t.accentGrad}; border:none; border-radius:6px; color:#fff; padding:9px 22px; cursor:pointer; font-size:13px; font-weight:700; transition:all .15s; white-space:nowrap; }
+          .sb:hover { filter:brightness(1.12); transform:translateY(-1px); }
+          .cb { background:#ef4444; border:none; border-radius:6px; color:#fff; padding:9px 22px; cursor:pointer; font-size:13px; font-weight:700; }
+          .stab { flex:1; padding:5px 2px; border-radius:5px; border:none; cursor:pointer; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.4px; transition:all .15s; }
+        `}</style>
 
-          <select
-            value={method}
-            onChange={(e) => setMethod(e.target.value)}
+        {/* ── SIDEBAR ── */}
+        {sidebarOpen && (
+          <div
             style={{
-              background: t.card,
-              border: `1px solid ${t.border2}`,
-              borderRadius: 6,
-              color: METHOD_COLORS[method],
-              fontWeight: 700,
-              fontSize: 13,
-              padding: "8px 10px",
-              cursor: "pointer",
-              minWidth: 100,
-              fontFamily: "'Fira Code',monospace",
-              outline: "none",
+              width: 238,
+              background: t.sidebar,
+              borderRight: `1px solid ${t.border}`,
+              display: "flex",
+              flexDirection: "column",
+              flexShrink: 0,
             }}
           >
-            {METHODS.map((m) => (
-              <option
-                key={m}
-                style={{ color: METHOD_COLORS[m], background: t.card }}
-              >
-                {m}
-              </option>
-            ))}
-          </select>
-
-          <input
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && sendRequest()}
-            placeholder="Enter URL  •  Ctrl+Enter to send"
-            style={{ ...inp, flex: 1 }}
-          />
-
-          {loading ? (
-            <button className="cb" onClick={() => abortRef.current?.abort()}>
-              ✕ Cancel
-            </button>
-          ) : (
-            <button className="sb" onClick={sendRequest}>
-              ▶ Send
-            </button>
-          )}
-
-          <input
-            value={reqName}
-            onChange={(e) => setReqName(e.target.value)}
-            placeholder="Name (opt.)"
-            style={{ ...inp, width: 105, fontSize: 12, padding: "8px 10px" }}
-          />
-          <button
-            className="ib"
-            onClick={() => {
-              setCollection((p) => [
-                ...p,
-                {
-                  method,
-                  url,
-                  headers: [...hdrs],
-                  params: [...params],
-                  body,
-                  name: reqName || url,
-                  authType,
-                  authToken,
-                },
-              ]);
-              setReqName("");
-            }}
-            title="Save request"
-          >
-            💾
-          </button>
-          <button
-            className="ib"
-            onClick={() => setDark((d) => !d)}
-            title="Toggle theme"
-            style={{ fontSize: 14 }}
-          >
-            {dark ? "☀️" : "🌙"}
-          </button>
-        </div>
-
-        {/* SPLIT AREA */}
-        <div
-          ref={containerRef}
-          style={{ flex: 1, display: "flex", overflow: "hidden" }}
-        >
-          {/* ── REQUEST PANEL ── */}
-          {!fullscreen && (
             <div
               style={{
-                width: `${split}%`,
-                display: "flex",
-                flexDirection: "column",
-                minWidth: 0,
-                flexShrink: 0,
+                padding: "13px 12px",
+                borderBottom: `1px solid ${t.border}`,
               }}
             >
               <div
                 style={{
                   display: "flex",
-                  borderBottom: `1px solid ${t.border}`,
-                  background: t.sidebar,
-                  paddingLeft: 6,
-                  flexShrink: 0,
-                  overflowX: "auto",
+                  alignItems: "center",
+                  gap: 8,
+                  marginBottom: 12,
                 }}
               >
-                {Object.keys(TAB_ICONS).map((tab) => (
+                <div
+                  style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: 6,
+                    background: t.accentGrad,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 14,
+                    flexShrink: 0,
+                  }}
+                >
+                  ⚡
+                </div>
+                <span style={{ fontWeight: 700, fontSize: 15, color: t.text }}>
+                  DevProbe
+                </span>
+                <span
+                  style={{
+                    marginLeft: "auto",
+                    fontSize: 10,
+                    color: t.textDim,
+                    background: t.card,
+                    border: `1px solid ${t.border2}`,
+                    borderRadius: 4,
+                    padding: "1px 6px",
+                  }}
+                >
+                  v3
+                </span>
+              </div>
+              <div style={{ display: "flex", gap: 3 }}>
+                {[
+                  ["collection", "📁 Saved"],
+                  ["history", "🕒 History"],
+                  ["env", "🌐 Env"],
+                ].map(([k, label]) => (
                   <button
-                    key={tab}
-                    className={`tb ${reqTab === tab ? "on" : ""}`}
-                    onClick={() => setReqTab(tab)}
+                    key={k}
+                    className="stab"
+                    onClick={() => setSideTab(k)}
+                    style={{
+                      background: sideTab === k ? t.card : "transparent",
+                      color: sideTab === k ? t.accent : t.textMuted,
+                    }}
                   >
-                    {TAB_ICONS[tab]} {tab}
-                    {tab === "Tests" && testResult && (
-                      <span
-                        style={{
-                          marginLeft: 5,
-                          background: testResult.every((r) => r.passed)
-                            ? "#14532d"
-                            : "#7f1d1d",
-                          color: testResult.every((r) => r.passed)
-                            ? "#4ade80"
-                            : "#fca5a5",
-                          borderRadius: 10,
-                          padding: "1px 6px",
-                          fontSize: 10,
-                        }}
-                      >
-                        {testResult.filter((r) => r.passed).length}/
-                        {testResult.length}
-                      </span>
-                    )}
+                    {label}
                   </button>
                 ))}
               </div>
-
-              <div style={{ flex: 1, overflow: "auto", padding: 14 }}>
-                {reqTab === "Params" && (
-                  <>
-                    <p
+            </div>
+            <div style={{ flex: 1, overflow: "auto", padding: 8 }}>
+              {sideTab === "collection" &&
+                (collection.length === 0 ? (
+                  <p
+                    style={{
+                      textAlign: "center",
+                      color: t.textDim,
+                      fontSize: 12,
+                      marginTop: 32,
+                      lineHeight: 2,
+                    }}
+                  >
+                    No saved requests.
+                    <br />
+                    Hit 💾 to save one.
+                  </p>
+                ) : (
+                  collection.map((item, i) => (
+                    <div
+                      key={i}
+                      onClick={() => loadReq(item)}
                       style={{
-                        fontSize: 11,
-                        color: t.textMuted,
-                        marginBottom: 10,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6,
+                        padding: "7px 10px",
+                        borderRadius: 6,
+                        cursor: "pointer",
+                        marginBottom: 3,
                       }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.background = t.card)
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.background = "transparent")
+                      }
                     >
-                      Appended to URL automatically.
-                    </p>
-                    <KV rows={params} onChange={setParams} t={t} />
-                  </>
-                )}
-
-                {reqTab === "Headers" && (
-                  <KV rows={hdrs} onChange={setHdrs} t={t} />
-                )}
-
-                {reqTab === "Body" && (
-                  <div>
+                      <span
+                        style={{
+                          color: METHOD_COLORS[item.method] || "#9ca3af",
+                          fontSize: 10,
+                          fontWeight: 700,
+                          minWidth: 40,
+                          fontFamily: "monospace",
+                        }}
+                      >
+                        {item.method}
+                      </span>
+                      <span
+                        style={{
+                          color: t.text,
+                          fontSize: 12,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          flex: 1,
+                        }}
+                      >
+                        {item.name || item.url}
+                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCollection((p) => p.filter((_, j) => j !== i));
+                        }}
+                        style={{
+                          background: "none",
+                          border: "none",
+                          color: t.textDim,
+                          cursor: "pointer",
+                          fontSize: 11,
+                        }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))
+                ))}
+              {sideTab === "history" &&
+                (history.length === 0 ? (
+                  <p
+                    style={{
+                      textAlign: "center",
+                      color: t.textDim,
+                      fontSize: 12,
+                      marginTop: 32,
+                      lineHeight: 2,
+                    }}
+                  >
+                    No history yet.
+                    <br />
+                    Send a request!
+                  </p>
+                ) : (
+                  <>
                     <div
                       style={{
                         display: "flex",
-                        gap: 14,
-                        marginBottom: 12,
+                        justifyContent: "space-between",
                         alignItems: "center",
-                        flexWrap: "wrap",
-                      }}
-                    >
-                      {["none", "json", "text", "form"].map((bt) => (
-                        <label
-                          key={bt}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 4,
-                            cursor: "pointer",
-                            fontSize: 12,
-                            color: bodyType === bt ? t.accent : t.textMuted,
-                          }}
-                        >
-                          <input
-                            type="radio"
-                            name="bt"
-                            value={bt}
-                            checked={bodyType === bt}
-                            onChange={() => setBodyType(bt)}
-                            style={{ accentColor: t.accent }}
-                          />
-                          {bt === "json"
-                            ? "JSON"
-                            : bt === "text"
-                              ? "Text"
-                              : bt === "form"
-                                ? "Form"
-                                : "None"}
-                        </label>
-                      ))}
-                      {bodyType === "json" && (
-                        <button
-                          className="ib"
-                          onClick={() => {
-                            try {
-                              setBody(
-                                JSON.stringify(JSON.parse(body), null, 2),
-                              );
-                            } catch {
-                              alert("Invalid JSON");
-                            }
-                          }}
-                          style={{ marginLeft: "auto", fontSize: 11 }}
-                        >
-                          Format
-                        </button>
-                      )}
-                    </div>
-                    {bodyType !== "none" && bodyType !== "form" && (
-                      <textarea
-                        value={body}
-                        onChange={(e) => setBody(e.target.value)}
-                        spellCheck={false}
-                        style={{ ...codeArea, height: 220 }}
-                      />
-                    )}
-                    {bodyType === "form" && (
-                      <KV
-                        rows={params}
-                        onChange={setParams}
-                        t={t}
-                        ph={{ key: "Field", value: "Value" }}
-                      />
-                    )}
-                  </div>
-                )}
-
-                {reqTab === "Auth" && (
-                  <div>
-                    <div style={{ marginBottom: 14 }}>
-                      <label style={lbl}>Auth Type</label>
-                      <select
-                        value={authType}
-                        onChange={(e) => setAuthType(e.target.value)}
-                        style={{ ...inp, width: 200 }}
-                      >
-                        {AUTH_TYPES.map((a) => (
-                          <option key={a} style={{ background: t.card }}>
-                            {a}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    {authType === "Bearer Token" && (
-                      <div>
-                        <label style={lbl}>Token</label>
-                        <input
-                          value={authToken}
-                          onChange={(e) => setAuthToken(e.target.value)}
-                          placeholder="eyJhbGci…"
-                          style={{ ...inp, width: "100%" }}
-                        />
-                      </div>
-                    )}
-                    {authType === "Basic Auth" && (
-                      <div style={{ display: "flex", gap: 10 }}>
-                        <div style={{ flex: 1 }}>
-                          <label style={lbl}>Username</label>
-                          <input
-                            value={authUser}
-                            onChange={(e) => setAuthUser(e.target.value)}
-                            style={inp}
-                          />
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <label style={lbl}>Password</label>
-                          <input
-                            type="password"
-                            value={authPass}
-                            onChange={(e) => setAuthPass(e.target.value)}
-                            style={inp}
-                          />
-                        </div>
-                      </div>
-                    )}
-                    {authType === "API Key" && (
-                      <div style={{ display: "flex", gap: 10 }}>
-                        <div>
-                          <label style={lbl}>Header Name</label>
-                          <input
-                            value={apiKeyName}
-                            onChange={(e) => setApiKeyName(e.target.value)}
-                            style={inp}
-                          />
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <label style={lbl}>Value</label>
-                          <input
-                            value={apiKeyValue}
-                            onChange={(e) => setApiKeyValue(e.target.value)}
-                            style={{ ...inp, width: "100%" }}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {reqTab === "Tests" && (
-                  <div>
-                    <p
-                      style={{
-                        fontSize: 11,
-                        color: t.textMuted,
+                        padding: "2px 4px",
                         marginBottom: 8,
                       }}
                     >
-                      Use{" "}
-                      <code style={{ color: t.accent }}>pm.test(name, fn)</code>{" "}
-                      and{" "}
-                      <code style={{ color: t.accent }}>pm.expect(val)</code>
-                    </p>
-                    <textarea
-                      value={testScript}
-                      onChange={(e) => setTestScript(e.target.value)}
-                      spellCheck={false}
-                      style={{ ...codeArea, height: 180 }}
+                      <span style={{ fontSize: 11, color: t.textMuted }}>
+                        Last {history.length} requests
+                      </span>
+                      <button
+                        onClick={() => setHistory([])}
+                        style={{
+                          background: "none",
+                          border: "none",
+                          color: t.textDim,
+                          cursor: "pointer",
+                          fontSize: 11,
+                        }}
+                      >
+                        Clear
+                      </button>
+                    </div>
+                    {history.map((item, i) => (
+                      <HistoryRow key={i} item={item} onLoad={loadReq} t={t} />
+                    ))}
+                  </>
+                ))}
+              {sideTab === "env" && (
+                <div style={{ padding: 4 }}>
+                  <p
+                    style={{
+                      fontSize: 11,
+                      color: t.textMuted,
+                      marginBottom: 8,
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    JSON variables. Use{" "}
+                    <code style={{ color: t.accent }}>{"{{name}}"}</code> in any
+                    field.
+                  </p>
+                  <textarea
+                    value={envText}
+                    onChange={(e) => setEnvText(e.target.value)}
+                    style={{ ...codeArea, height: 150, fontSize: 12 }}
+                    spellCheck={false}
+                  />
+                  <button
+                    onClick={() => {
+                      try {
+                        setEnv(JSON.parse(envText));
+                      } catch {
+                        alert("Invalid JSON");
+                      }
+                    }}
+                    style={{
+                      width: "100%",
+                      marginTop: 8,
+                      padding: 8,
+                      borderRadius: 6,
+                      border: "none",
+                      background: t.accentGrad,
+                      color: "#fff",
+                      cursor: "pointer",
+                      fontSize: 12,
+                      fontWeight: 600,
+                    }}
+                  >
+                    Apply
+                  </button>
+                  {Object.keys(env).length > 0 &&
+                    Object.entries(env).map(([k, v]) => (
+                      <div
+                        key={k}
+                        style={{
+                          fontSize: 11,
+                          color: t.textMuted,
+                          padding: "4px 0",
+                          borderBottom: `1px solid ${t.border}`,
+                        }}
+                      >
+                        <span style={{ color: t.accent }}>{k}</span> = {v}
+                      </div>
+                    ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ── MAIN ── */}
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            minWidth: 0,
+          }}
+        >
+          {/* TOP BAR */}
+          <div
+            style={{
+              padding: "10px 14px",
+              borderBottom: `1px solid ${t.border}`,
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              background: t.sidebar,
+              flexShrink: 0,
+            }}
+          >
+            <button
+              className="ib"
+              onClick={() => setSidebarOpen((s) => !s)}
+              style={{ fontSize: 15, padding: "5px 9px" }}
+            >
+              ☰
+            </button>
+            <select
+              value={method}
+              onChange={(e) => setMethod(e.target.value)}
+              style={{
+                background: t.card,
+                border: `1px solid ${t.border2}`,
+                borderRadius: 6,
+                color: METHOD_COLORS[method],
+                fontWeight: 700,
+                fontSize: 13,
+                padding: "8px 10px",
+                cursor: "pointer",
+                minWidth: 100,
+                fontFamily: "'Fira Code',monospace",
+                outline: "none",
+              }}
+            >
+              {METHODS.map((m) => (
+                <option
+                  key={m}
+                  style={{ color: METHOD_COLORS[m], background: t.card }}
+                >
+                  {m}
+                </option>
+              ))}
+            </select>
+            <input
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && sendRequest()}
+              placeholder="Enter URL  •  Ctrl+Enter to send"
+              style={{ ...inp, flex: 1 }}
+            />
+            {loading ? (
+              <button className="cb" onClick={() => abortRef.current?.abort()}>
+                ✕ Cancel
+              </button>
+            ) : (
+              <button className="sb" onClick={sendRequest}>
+                ▶ Send
+              </button>
+            )}
+            <input
+              value={reqName}
+              onChange={(e) => setReqName(e.target.value)}
+              placeholder="Name (opt.)"
+              style={{ ...inp, width: 105, fontSize: 12, padding: "8px 10px" }}
+            />
+            <button
+              className="ib"
+              onClick={() => {
+                setCollection((p) => [
+                  ...p,
+                  {
+                    method,
+                    url,
+                    headers: [...hdrs],
+                    params: [...params],
+                    body,
+                    name: reqName || url,
+                    authType,
+                    authToken,
+                  },
+                ]);
+                setReqName("");
+              }}
+              title="Save request"
+            >
+              💾
+            </button>
+            <button
+              className="ib"
+              onClick={() => setDark((d) => !d)}
+              title="Toggle theme"
+              style={{ fontSize: 14 }}
+            >
+              {dark ? "☀️" : "🌙"}
+            </button>
+          </div>
+
+          {/* SPLIT AREA */}
+          <div
+            ref={containerRef}
+            style={{ flex: 1, display: "flex", overflow: "hidden" }}
+          >
+            {/* REQUEST PANEL */}
+            {!fullscreen && (
+              <div
+                style={{
+                  width: `${split}%`,
+                  display: "flex",
+                  flexDirection: "column",
+                  minWidth: 0,
+                  flexShrink: 0,
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    borderBottom: `1px solid ${t.border}`,
+                    background: t.sidebar,
+                    paddingLeft: 6,
+                    flexShrink: 0,
+                    overflowX: "auto",
+                  }}
+                >
+                  {Object.keys(TAB_ICONS).map((tab) => (
+                    <button
+                      key={tab}
+                      className={`tb ${reqTab === tab ? "on" : ""}`}
+                      onClick={() => setReqTab(tab)}
+                    >
+                      {TAB_ICONS[tab]} {tab}
+                      {tab === "Tests" && testResult && (
+                        <span
+                          style={{
+                            marginLeft: 5,
+                            background: testResult.every((r) => r.passed)
+                              ? "#14532d"
+                              : "#7f1d1d",
+                            color: testResult.every((r) => r.passed)
+                              ? "#4ade80"
+                              : "#fca5a5",
+                            borderRadius: 10,
+                            padding: "1px 6px",
+                            fontSize: 10,
+                          }}
+                        >
+                          {testResult.filter((r) => r.passed).length}/
+                          {testResult.length}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+                <div style={{ flex: 1, overflow: "auto", padding: 14 }}>
+                  {reqTab === "Params" && (
+                    <>
+                      <p
+                        style={{
+                          fontSize: 11,
+                          color: t.textMuted,
+                          marginBottom: 10,
+                        }}
+                      >
+                        Appended to URL automatically.
+                      </p>
+                      <KV rows={params} onChange={setParams} t={t} />
+                    </>
+                  )}
+                  {reqTab === "Headers" && (
+                    <KV rows={hdrs} onChange={setHdrs} t={t} />
+                  )}
+                  {reqTab === "Body" && (
+                    <div>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: 14,
+                          marginBottom: 12,
+                          alignItems: "center",
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        {["none", "json", "text", "form"].map((bt) => (
+                          <label
+                            key={bt}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 4,
+                              cursor: "pointer",
+                              fontSize: 12,
+                              color: bodyType === bt ? t.accent : t.textMuted,
+                            }}
+                          >
+                            <input
+                              type="radio"
+                              name="bt"
+                              value={bt}
+                              checked={bodyType === bt}
+                              onChange={() => setBodyType(bt)}
+                              style={{ accentColor: t.accent }}
+                            />
+                            {bt === "json"
+                              ? "JSON"
+                              : bt === "text"
+                                ? "Text"
+                                : bt === "form"
+                                  ? "Form"
+                                  : "None"}
+                          </label>
+                        ))}
+                        {bodyType === "json" && (
+                          <button
+                            className="ib"
+                            onClick={() => {
+                              try {
+                                setBody(
+                                  JSON.stringify(JSON.parse(body), null, 2),
+                                );
+                              } catch {
+                                alert("Invalid JSON");
+                              }
+                            }}
+                            style={{ marginLeft: "auto", fontSize: 11 }}
+                          >
+                            Format
+                          </button>
+                        )}
+                      </div>
+                      {bodyType !== "none" && bodyType !== "form" && (
+                        <textarea
+                          value={body}
+                          onChange={(e) => setBody(e.target.value)}
+                          spellCheck={false}
+                          style={{ ...codeArea, height: 220 }}
+                        />
+                      )}
+                      {bodyType === "form" && (
+                        <KV
+                          rows={params}
+                          onChange={setParams}
+                          t={t}
+                          ph={{ key: "Field", value: "Value" }}
+                        />
+                      )}
+                    </div>
+                  )}
+                  {reqTab === "Auth" && (
+                    <div>
+                      <div style={{ marginBottom: 14 }}>
+                        <label style={lbl}>Auth Type</label>
+                        <select
+                          value={authType}
+                          onChange={(e) => setAuthType(e.target.value)}
+                          style={{ ...inp, width: 200 }}
+                        >
+                          {AUTH_TYPES.map((a) => (
+                            <option key={a} style={{ background: t.card }}>
+                              {a}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      {authType === "Bearer Token" && (
+                        <div>
+                          <label style={lbl}>Token</label>
+                          <input
+                            value={authToken}
+                            onChange={(e) => setAuthToken(e.target.value)}
+                            placeholder="eyJhbGci…"
+                            style={{ ...inp, width: "100%" }}
+                          />
+                        </div>
+                      )}
+                      {authType === "Basic Auth" && (
+                        <div style={{ display: "flex", gap: 10 }}>
+                          <div style={{ flex: 1 }}>
+                            <label style={lbl}>Username</label>
+                            <input
+                              value={authUser}
+                              onChange={(e) => setAuthUser(e.target.value)}
+                              style={inp}
+                            />
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <label style={lbl}>Password</label>
+                            <input
+                              type="password"
+                              value={authPass}
+                              onChange={(e) => setAuthPass(e.target.value)}
+                              style={inp}
+                            />
+                          </div>
+                        </div>
+                      )}
+                      {authType === "API Key" && (
+                        <div style={{ display: "flex", gap: 10 }}>
+                          <div>
+                            <label style={lbl}>Header Name</label>
+                            <input
+                              value={apiKeyName}
+                              onChange={(e) => setApiKeyName(e.target.value)}
+                              style={inp}
+                            />
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <label style={lbl}>Value</label>
+                            <input
+                              value={apiKeyValue}
+                              onChange={(e) => setApiKeyValue(e.target.value)}
+                              style={{ ...inp, width: "100%" }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {reqTab === "Tests" && (
+                    <div>
+                      <p
+                        style={{
+                          fontSize: 11,
+                          color: t.textMuted,
+                          marginBottom: 8,
+                        }}
+                      >
+                        Use{" "}
+                        <code style={{ color: t.accent }}>
+                          pm.test(name, fn)
+                        </code>{" "}
+                        and{" "}
+                        <code style={{ color: t.accent }}>pm.expect(val)</code>
+                      </p>
+                      <textarea
+                        value={testScript}
+                        onChange={(e) => setTestScript(e.target.value)}
+                        spellCheck={false}
+                        style={{ ...codeArea, height: 180 }}
+                      />
+                      {testResult &&
+                        testResult.map((r, i) => (
+                          <div
+                            key={i}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 8,
+                              padding: "6px 10px",
+                              borderRadius: 5,
+                              marginTop: 6,
+                              background: r.passed ? "#14532d22" : "#7f1d1d22",
+                              border: `1px solid ${r.passed ? "#166534" : "#991b1b"}`,
+                              animation: "fade .2s ease",
+                            }}
+                          >
+                            <span>{r.passed ? "✅" : "❌"}</span>
+                            <span
+                              style={{
+                                fontSize: 12,
+                                color: r.passed ? "#4ade80" : "#fca5a5",
+                                flex: 1,
+                              }}
+                            >
+                              {r.name}
+                            </span>
+                            {r.error && (
+                              <span style={{ fontSize: 11, color: "#f87171" }}>
+                                {r.error}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* DRAG HANDLE */}
+            {!fullscreen && (
+              <div
+                onMouseDown={(e) => {
+                  dragging.current = true;
+                  e.preventDefault();
+                }}
+                style={{
+                  width: 4,
+                  cursor: "col-resize",
+                  background: t.border,
+                  flexShrink: 0,
+                  transition: "background .15s",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background = t.accent)
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = t.border)
+                }
+              />
+            )}
+
+            {/* RESPONSE PANEL */}
+            <div
+              style={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                minWidth: 0,
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "8px 14px",
+                  borderBottom: `1px solid ${t.border}`,
+                  background: t.sidebar,
+                  flexShrink: 0,
+                  flexWrap: "wrap",
+                }}
+              >
+                <div style={{ display: "flex", gap: 3 }}>
+                  {["Body", "Headers", "Info"].map((tab) => (
+                    <button
+                      key={tab}
+                      className={`rtb ${resTab === tab ? "on" : ""}`}
+                      onClick={() => setResTab(tab)}
+                    >
+                      {tab}
+                    </button>
+                  ))}
+                </div>
+                {resp && resTab === "Body" && (
+                  <div style={{ display: "flex", gap: 4, marginLeft: 6 }}>
+                    {resp.isJson && (
+                      <button
+                        className={`vtb ${resView === "pretty" ? "on" : ""}`}
+                        onClick={() => setResView("pretty")}
+                      >
+                        ✦ JSON
+                      </button>
+                    )}
+                    {resp.isHtml && (
+                      <button
+                        className={`vtb ${resView === "html" ? "on" : ""}`}
+                        onClick={() => setResView("html")}
+                      >
+                        ◈ HTML
+                      </button>
+                    )}
+                    <button
+                      className={`vtb ${resView === "raw" ? "on" : ""}`}
+                      onClick={() => setResView("raw")}
+                    >
+                      Raw
+                    </button>
+                  </div>
+                )}
+                <div style={{ flex: 1 }} />
+                {resp && !errInfo && (
+                  <>
+                    <Badge status={resp.status} />
+                    <span style={{ fontSize: 12, color: t.textMuted }}>
+                      ⏱ {resp.time}ms
+                    </span>
+                    {resp.size != null && (
+                      <span style={{ fontSize: 12, color: t.textMuted }}>
+                        📦{" "}
+                        {resp.size > 1024
+                          ? (resp.size / 1024).toFixed(1) + " KB"
+                          : resp.size + " B"}
+                      </span>
+                    )}
+                    {resp.isJson && (
+                      <span
+                        style={{
+                          fontSize: 11,
+                          background: "#49cc9022",
+                          color: "#49cc90",
+                          border: "1px solid #49cc9044",
+                          borderRadius: 4,
+                          padding: "1px 7px",
+                        }}
+                      >
+                        JSON
+                      </span>
+                    )}
+                    {resp.isHtml && (
+                      <span
+                        style={{
+                          fontSize: 11,
+                          background: "#61affe22",
+                          color: "#61affe",
+                          border: "1px solid #61affe44",
+                          borderRadius: 4,
+                          padding: "1px 7px",
+                        }}
+                      >
+                        HTML
+                      </span>
+                    )}
+                    <button
+                      className="ib"
+                      onClick={copyResponse}
+                      style={{ fontSize: 11 }}
+                    >
+                      {copied ? "✓ Copied!" : "Copy"}
+                    </button>
+                  </>
+                )}
+                <button
+                  className="ib"
+                  onClick={() => setFullscreen((f) => !f)}
+                  title={fullscreen ? "Exit fullscreen" : "Fullscreen"}
+                  style={{ fontSize: 12 }}
+                >
+                  {fullscreen ? "⊠ Exit" : "⤢ Full"}
+                </button>
+              </div>
+
+              <div style={{ flex: 1, overflow: "auto", padding: 14 }}>
+                {loading ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      height: "100%",
+                      gap: 14,
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: "50%",
+                        border: `3px solid ${t.border2}`,
+                        borderTopColor: t.accent,
+                        animation: "spin .7s linear infinite",
+                      }}
                     />
-                    {testResult &&
-                      testResult.map((r, i) => (
+                    <p style={{ color: t.textMuted, fontSize: 13 }}>
+                      Sending {method} request…
+                    </p>
+                  </div>
+                ) : errInfo ? (
+                  <div style={{ animation: "fade .25s ease" }}>
+                    <ErrorPanel e={errInfo} />
+                  </div>
+                ) : !resp ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      height: "100%",
+                      gap: 10,
+                    }}
+                  >
+                    <div style={{ fontSize: 48 }}>⚡</div>
+                    <p
+                      style={{
+                        fontSize: 14,
+                        fontWeight: 500,
+                        color: t.textMuted,
+                      }}
+                    >
+                      Hit Send to get a response
+                    </p>
+                    <p style={{ fontSize: 12, color: t.textDim }}>
+                      Ctrl+Enter also works
+                    </p>
+                  </div>
+                ) : resTab === "Body" ? (
+                  <>
+                    {resp.body === "" || resp.body == null ? (
+                      <div
+                        style={{
+                          background: t.codeBg,
+                          borderRadius: 8,
+                          border: `1px solid ${t.border}`,
+                          padding: 16,
+                        }}
+                      >
+                        <p
+                          style={{
+                            color: t.textDim,
+                            fontSize: 13,
+                            fontStyle: "italic",
+                          }}
+                        >
+                          Empty response body
+                        </p>
+                      </div>
+                    ) : resView === "html" && resp.isHtml ? (
+                      <div
+                        style={{
+                          borderRadius: 8,
+                          border: `1px solid ${t.border}`,
+                          overflow: "hidden",
+                          animation: "fade .2s ease",
+                        }}
+                      >
                         <div
-                          key={i}
                           style={{
                             display: "flex",
                             alignItems: "center",
                             gap: 8,
-                            padding: "6px 10px",
-                            borderRadius: 5,
-                            marginTop: 6,
-                            background: r.passed ? "#14532d22" : "#7f1d1d22",
-                            border: `1px solid ${r.passed ? "#166534" : "#991b1b"}`,
-                            animation: "fade .2s ease",
+                            padding: "7px 12px",
+                            background: t.card,
+                            borderBottom: `1px solid ${t.border}`,
                           }}
                         >
-                          <span>{r.passed ? "✅" : "❌"}</span>
+                          <span style={{ fontSize: 11, color: t.textMuted }}>
+                            ◈ Rendered HTML Preview
+                          </span>
                           <span
                             style={{
-                              fontSize: 12,
-                              color: r.passed ? "#4ade80" : "#fca5a5",
-                              flex: 1,
+                              marginLeft: "auto",
+                              fontSize: 10,
+                              color: t.textDim,
+                              background: t.codeBg,
+                              border: `1px solid ${t.border2}`,
+                              borderRadius: 4,
+                              padding: "2px 7px",
                             }}
                           >
-                            {r.name}
+                            sandboxed
                           </span>
-                          {r.error && (
-                            <span style={{ fontSize: 11, color: "#f87171" }}>
-                              {r.error}
-                            </span>
-                          )}
                         </div>
-                      ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* DRAG HANDLE */}
-          {!fullscreen && (
-            <div
-              onMouseDown={(e) => {
-                dragging.current = true;
-                e.preventDefault();
-              }}
-              style={{
-                width: 4,
-                cursor: "col-resize",
-                background: t.border,
-                flexShrink: 0,
-                transition: "background .15s",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.background = t.accent)
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.background = t.border)
-              }
-            />
-          )}
-
-          {/* ── RESPONSE PANEL ── */}
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              minWidth: 0,
-            }}
-          >
-            {/* Response tab bar */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "8px 14px",
-                borderBottom: `1px solid ${t.border}`,
-                background: t.sidebar,
-                flexShrink: 0,
-                flexWrap: "wrap",
-              }}
-            >
-              <div style={{ display: "flex", gap: 3 }}>
-                {["Body", "Headers", "Info"].map((tab) => (
-                  <button
-                    key={tab}
-                    className={`rtb ${resTab === tab ? "on" : ""}`}
-                    onClick={() => setResTab(tab)}
-                  >
-                    {tab}
-                  </button>
-                ))}
-              </div>
-
-              {/* Body view toggle: JSON / HTML / Raw */}
-              {resp && resTab === "Body" && (
-                <div style={{ display: "flex", gap: 4, marginLeft: 6 }}>
-                  {resp.isJson && (
-                    <button
-                      className={`vtb ${resView === "pretty" ? "on" : ""}`}
-                      onClick={() => setResView("pretty")}
-                    >
-                      ✦ JSON
-                    </button>
-                  )}
-                  {resp.isHtml && (
-                    <button
-                      className={`vtb ${resView === "html" ? "on" : ""}`}
-                      onClick={() => setResView("html")}
-                    >
-                      ◈ HTML
-                    </button>
-                  )}
-                  <button
-                    className={`vtb ${resView === "raw" ? "on" : ""}`}
-                    onClick={() => setResView("raw")}
-                  >
-                    Raw
-                  </button>
-                </div>
-              )}
-
-              <div style={{ flex: 1 }} />
-
-              {/* Response meta */}
-              {resp && !errInfo && (
-                <>
-                  <Badge status={resp.status} />
-                  <span style={{ fontSize: 12, color: t.textMuted }}>
-                    ⏱ {resp.time}ms
-                  </span>
-                  {resp.size != null && (
-                    <span style={{ fontSize: 12, color: t.textMuted }}>
-                      📦{" "}
-                      {resp.size > 1024
-                        ? (resp.size / 1024).toFixed(1) + " KB"
-                        : resp.size + " B"}
-                    </span>
-                  )}
-                  {resp.isJson && (
-                    <span
-                      style={{
-                        fontSize: 11,
-                        background: "#49cc9022",
-                        color: "#49cc90",
-                        border: "1px solid #49cc9044",
-                        borderRadius: 4,
-                        padding: "1px 7px",
-                      }}
-                    >
-                      JSON
-                    </span>
-                  )}
-                  {resp.isHtml && (
-                    <span
-                      style={{
-                        fontSize: 11,
-                        background: "#61affe22",
-                        color: "#61affe",
-                        border: "1px solid #61affe44",
-                        borderRadius: 4,
-                        padding: "1px 7px",
-                      }}
-                    >
-                      HTML
-                    </span>
-                  )}
-                  <button
-                    className="ib"
-                    onClick={copyResponse}
-                    style={{ fontSize: 11 }}
-                  >
-                    {copied ? "✓ Copied!" : "Copy"}
-                  </button>
-                </>
-              )}
-              <button
-                className="ib"
-                onClick={() => setFullscreen((f) => !f)}
-                title={fullscreen ? "Exit fullscreen" : "Fullscreen"}
-                style={{ fontSize: 12 }}
-              >
-                {fullscreen ? "⊠ Exit" : "⤢ Full"}
-              </button>
-            </div>
-
-            {/* Response content */}
-            <div style={{ flex: 1, overflow: "auto", padding: 14 }}>
-              {loading ? (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: "100%",
-                    gap: 14,
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: "50%",
-                      border: `3px solid ${t.border2}`,
-                      borderTopColor: t.accent,
-                      animation: "spin .7s linear infinite",
-                    }}
-                  />
-                  <p style={{ color: t.textMuted, fontSize: 13 }}>
-                    Sending {method} request…
-                  </p>
-                </div>
-              ) : errInfo ? (
-                <div style={{ animation: "fade .25s ease" }}>
-                  <ErrorPanel e={errInfo} />
-                </div>
-              ) : !resp ? (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: "100%",
-                    gap: 10,
-                  }}
-                >
-                  <div style={{ fontSize: 48 }}>⚡</div>
-                  <p
-                    style={{
-                      fontSize: 14,
-                      fontWeight: 500,
-                      color: t.textMuted,
-                    }}
-                  >
-                    Hit Send to get a response
-                  </p>
-                  <p style={{ fontSize: 12, color: t.textDim }}>
-                    Ctrl+Enter also works
-                  </p>
-                </div>
-              ) : resTab === "Body" ? (
-                <>
-                  {resp.body === "" || resp.body == null ? (
-                    <div
-                      style={{
-                        background: t.codeBg,
-                        borderRadius: 8,
-                        border: `1px solid ${t.border}`,
-                        padding: 16,
-                      }}
-                    >
-                      <p
-                        style={{
-                          color: t.textDim,
-                          fontSize: 13,
-                          fontStyle: "italic",
-                        }}
-                      >
-                        Empty response body
-                      </p>
-                    </div>
-                  ) : resView === "html" && resp.isHtml ? (
-                    <div
-                      style={{
-                        borderRadius: 8,
-                        border: `1px solid ${t.border}`,
-                        overflow: "hidden",
-                        animation: "fade .2s ease",
-                      }}
-                    >
-                      {/* HTML preview toolbar */}
+                        <iframe
+                          srcDoc={resp.raw}
+                          sandbox="allow-same-origin allow-scripts"
+                          style={{
+                            width: "100%",
+                            height: "480px",
+                            border: "none",
+                            background: "#fff",
+                            display: "block",
+                          }}
+                          title="HTML Response Preview"
+                        />
+                      </div>
+                    ) : resView === "pretty" && resp.isJson ? (
                       <div
                         style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 8,
-                          padding: "7px 12px",
-                          background: t.card,
-                          borderBottom: `1px solid ${t.border}`,
+                          background: t.codeBg,
+                          borderRadius: 8,
+                          border: `1px solid ${t.border}`,
+                          padding: 16,
+                          animation: "fade .2s ease",
                         }}
                       >
-                        <span style={{ fontSize: 11, color: t.textMuted }}>
-                          ◈ Rendered HTML Preview
-                        </span>
-                        <span
+                        <Highlight code={resp.body} isDark={dark} />
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          background: t.codeBg,
+                          borderRadius: 8,
+                          border: `1px solid ${t.border}`,
+                          padding: 16,
+                          animation: "fade .2s ease",
+                        }}
+                      >
+                        <pre
                           style={{
-                            marginLeft: "auto",
-                            fontSize: 10,
-                            color: t.textDim,
-                            background: t.codeBg,
-                            border: `1px solid ${t.border2}`,
-                            borderRadius: 4,
-                            padding: "2px 7px",
+                            margin: 0,
+                            fontFamily: "'Fira Code',monospace",
+                            fontSize: 13,
+                            color: t.text,
+                            whiteSpace: "pre-wrap",
+                            wordBreak: "break-word",
+                            lineHeight: 1.7,
                           }}
                         >
-                          sandboxed
-                        </span>
+                          {resp.raw}
+                        </pre>
                       </div>
-                      <iframe
-                        srcDoc={resp.raw}
-                        sandbox="allow-same-origin allow-scripts"
-                        style={{
-                          width: "100%",
-                          height: "480px",
-                          border: "none",
-                          background: "#fff",
-                          display: "block",
-                        }}
-                        title="HTML Response Preview"
-                      />
-                    </div>
-                  ) : resView === "pretty" && resp.isJson ? (
-                    <div
-                      style={{
-                        background: t.codeBg,
-                        borderRadius: 8,
-                        border: `1px solid ${t.border}`,
-                        padding: 16,
-                        animation: "fade .2s ease",
-                      }}
-                    >
-                      <Highlight code={resp.body} isDark={dark} />
-                    </div>
-                  ) : (
-                    <div
-                      style={{
-                        background: t.codeBg,
-                        borderRadius: 8,
-                        border: `1px solid ${t.border}`,
-                        padding: 16,
-                        animation: "fade .2s ease",
-                      }}
-                    >
-                      <pre
-                        style={{
-                          margin: 0,
-                          fontFamily: "'Fira Code',monospace",
-                          fontSize: 13,
-                          color: t.text,
-                          whiteSpace: "pre-wrap",
-                          wordBreak: "break-word",
-                          lineHeight: 1.7,
-                        }}
-                      >
-                        {resp.raw}
-                      </pre>
-                    </div>
-                  )}
-                </>
-              ) : resTab === "Headers" ? (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 4,
-                    animation: "fade .2s ease",
-                  }}
-                >
-                  {Object.keys(resp.headers || {}).length === 0 ? (
-                    <p style={{ color: t.textDim, fontSize: 12 }}>
-                      No headers returned.
-                    </p>
-                  ) : (
-                    Object.entries(resp.headers).map(([k, v]) => (
+                    )}
+                  </>
+                ) : resTab === "Headers" ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 4,
+                      animation: "fade .2s ease",
+                    }}
+                  >
+                    {Object.keys(resp.headers || {}).length === 0 ? (
+                      <p style={{ color: t.textDim, fontSize: 12 }}>
+                        No headers returned.
+                      </p>
+                    ) : (
+                      Object.entries(resp.headers).map(([k, v]) => (
+                        <div
+                          key={k}
+                          style={{
+                            display: "flex",
+                            gap: 12,
+                            padding: "7px 12px",
+                            borderRadius: 5,
+                            background: t.card,
+                            borderLeft: `2px solid ${t.accent}`,
+                          }}
+                        >
+                          <span
+                            style={{
+                              color: t.accent,
+                              fontSize: 12,
+                              fontFamily: "monospace",
+                              minWidth: 180,
+                              flexShrink: 0,
+                            }}
+                          >
+                            {k}
+                          </span>
+                          <span
+                            style={{
+                              color: t.textMuted,
+                              fontSize: 12,
+                              fontFamily: "monospace",
+                              wordBreak: "break-all",
+                            }}
+                          >
+                            {v}
+                          </span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 8,
+                      animation: "fade .2s ease",
+                    }}
+                  >
+                    {[
+                      ["Method", resp.method],
+                      ["Status Code", resp.status],
+                      ["Status Text", resp.statusText],
+                      ["Response Time", `${resp.time} ms`],
+                      [
+                        "Response Size",
+                        resp.size != null
+                          ? resp.size > 1024
+                            ? (resp.size / 1024).toFixed(2) + " KB"
+                            : resp.size + " B"
+                          : "—",
+                      ],
+                      [
+                        "Content Type",
+                        resp.contentType ||
+                          resp.headers?.["content-type"] ||
+                          "—",
+                      ],
+                      [
+                        "Body Format",
+                        resp.isJson
+                          ? "JSON (auto-detected)"
+                          : resp.isHtml
+                            ? "HTML (auto-detected)"
+                            : "Plain text / other",
+                      ],
+                    ].map(([k, v]) => (
                       <div
                         key={k}
                         style={{
                           display: "flex",
-                          gap: 12,
-                          padding: "7px 12px",
-                          borderRadius: 5,
+                          gap: 16,
+                          padding: "10px 14px",
+                          borderRadius: 6,
                           background: t.card,
-                          borderLeft: `2px solid ${t.accent}`,
                         }}
                       >
                         <span
                           style={{
-                            color: t.accent,
+                            color: t.textMuted,
                             fontSize: 12,
-                            fontFamily: "monospace",
-                            minWidth: 180,
-                            flexShrink: 0,
+                            minWidth: 140,
                           }}
                         >
                           {k}
                         </span>
                         <span
                           style={{
-                            color: t.textMuted,
+                            color:
+                              k === "Body Format" && resp.isJson
+                                ? "#49cc90"
+                                : t.text,
                             fontSize: 12,
                             fontFamily: "monospace",
-                            wordBreak: "break-all",
                           }}
                         >
-                          {v}
+                          {String(v)}
                         </span>
                       </div>
-                    ))
-                  )}
-                </div>
-              ) : (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 8,
-                    animation: "fade .2s ease",
-                  }}
-                >
-                  {[
-                    ["Method", resp.method],
-                    ["Status Code", resp.status],
-                    ["Status Text", resp.statusText],
-                    ["Response Time", `${resp.time} ms`],
-                    [
-                      "Response Size",
-                      resp.size != null
-                        ? resp.size > 1024
-                          ? (resp.size / 1024).toFixed(2) + " KB"
-                          : resp.size + " B"
-                        : "—",
-                    ],
-                    [
-                      "Content Type",
-                      resp.contentType || resp.headers?.["content-type"] || "—",
-                    ],
-                    [
-                      "Body Format",
-                      resp.isJson
-                        ? "JSON (auto-detected)"
-                        : resp.isHtml
-                          ? "HTML (auto-detected)"
-                          : "Plain text / other",
-                    ],
-                  ].map(([k, v]) => (
-                    <div
-                      key={k}
-                      style={{
-                        display: "flex",
-                        gap: 16,
-                        padding: "10px 14px",
-                        borderRadius: 6,
-                        background: t.card,
-                      }}
-                    >
-                      <span
-                        style={{
-                          color: t.textMuted,
-                          fontSize: 12,
-                          minWidth: 140,
-                        }}
-                      >
-                        {k}
-                      </span>
-                      <span
-                        style={{
-                          color:
-                            k === "Body Format" && resp.isJson
-                              ? "#49cc90"
-                              : t.text,
-                          fontSize: 12,
-                          fontFamily: "monospace",
-                        }}
-                      >
-                        {String(v)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </DesktopGuard>
   );
 }
